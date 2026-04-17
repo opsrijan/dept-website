@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+
+{% block title %}Team | Department{% endblock %}
+
+{% block content %}
+<div class="card shadow-sm">
+    <div class="card-header bg-white"><h2 class="h4 mb-0">Team</h2></div>
+    <div class="card-body">
+        {% for member in members %}
+            <h3 class="h6">{{ member.name }} - {{ member.designation }}</h3>
+            <p class="mb-1">Email: {{ member.email|default:"N/A" }}</p>
+            <p class="text-muted">Joined: {{ member.joined_on|default:"N/A" }}</p>
+            <hr>
+        {% empty %}
+            <p class="text-muted mb-0">No team members listed yet.</p>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

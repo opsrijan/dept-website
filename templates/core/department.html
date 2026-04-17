@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+
+{% block title %}Department | Department{% endblock %}
+
+{% block content %}
+<div class="card shadow-sm">
+    <div class="card-header bg-white">
+        <h2 class="h4 mb-0">Department Details</h2>
+    </div>
+    <div class="card-body">
+        {% for department in departments %}
+            <div class="mb-4">
+                <h3 class="h5">{{ department.name }}</h3>
+                <p class="mb-1"><strong>Established:</strong> {{ department.established_year }}</p>
+                <p class="mb-1"><strong>Vision:</strong> {{ department.vision }}</p>
+                <p class="mb-0"><strong>Mission:</strong> {{ department.mission }}</p>
+            </div>
+        {% empty %}
+            <p class="text-muted mb-0">No department information available yet.</p>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

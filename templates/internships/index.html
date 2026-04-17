@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+
+{% block title %}Internship | Department{% endblock %}
+
+{% block content %}
+<div class="card shadow-sm">
+    <div class="card-header bg-white"><h2 class="h4 mb-0">Internship Opportunities</h2></div>
+    <div class="card-body">
+        {% for internship in internships %}
+            <h3 class="h6">{{ internship.company_name }} - {{ internship.role }}</h3>
+            <p class="mb-1">Stipend: {{ internship.stipend|default:"Not specified" }}</p>
+            <p class="mb-1">Deadline: {{ internship.deadline }}</p>
+            <p class="text-muted">{{ internship.description }}</p>
+            <hr>
+        {% empty %}
+            <p class="text-muted mb-0">No internship opportunities available.</p>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

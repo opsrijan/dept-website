@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+
+{% block title %}Gallery | Department{% endblock %}
+
+{% block content %}
+<div class="card shadow-sm">
+    <div class="card-header bg-white"><h2 class="h4 mb-0">Gallery</h2></div>
+    <div class="card-body">
+        <div class="row g-3">
+            {% for item in gallery_items %}
+                <div class="col-md-4">
+                    <div class="card h-100">
+                        <img src="{{ item.image_url }}" class="card-img-top" alt="{{ item.title }}">
+                        <div class="card-body">
+                            <h3 class="h6">{{ item.title }}</h3>
+                            <p class="mb-1 text-muted">{{ item.event_name }}</p>
+                            <p class="small mb-0">{{ item.caption }}</p>
+                        </div>
+                    </div>
+                </div>
+            {% empty %}
+                <p class="text-muted mb-0">No gallery items uploaded yet.</p>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}

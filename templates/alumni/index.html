@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+
+{% block title %}Alumni | Department{% endblock %}
+
+{% block content %}
+<div class="card shadow-sm">
+    <div class="card-header bg-white"><h2 class="h4 mb-0">Alumni</h2></div>
+    <div class="card-body">
+        {% for alumni in alumni_profiles %}
+            <h3 class="h6">{{ alumni.name }} ({{ alumni.graduation_year }})</h3>
+            <p class="mb-1">{{ alumni.current_role }} at {{ alumni.company }}</p>
+            <p class="text-muted">{{ alumni.achievements|default:"No achievements added yet." }}</p>
+            <hr>
+        {% empty %}
+            <p class="text-muted mb-0">No alumni profiles available.</p>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

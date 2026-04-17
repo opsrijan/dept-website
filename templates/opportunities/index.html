@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+
+{% block title %}Opportunities | Department{% endblock %}
+
+{% block content %}
+<div class="card shadow-sm">
+    <div class="card-header bg-white"><h2 class="h4 mb-0">Opportunities</h2></div>
+    <div class="card-body">
+        {% for opportunity in opportunities %}
+            <h3 class="h6">{{ opportunity.title }}</h3>
+            <p class="mb-1">{{ opportunity.opportunity_type }} by {{ opportunity.organizer }}</p>
+            <p class="mb-1">Apply by: {{ opportunity.apply_by }}</p>
+            <p class="text-muted">{{ opportunity.details }}</p>
+            <hr>
+        {% empty %}
+            <p class="text-muted mb-0">No opportunities posted yet.</p>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}
