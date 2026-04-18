@@ -1,0 +1,82 @@
+{% extends "base.html" %}
+
+{% block title %}Our Professors{% endblock %}
+
+{% block content %}
+<section class="professors-section py-5">
+  <div class="container">
+
+    <div class="text-center mb-5">
+      <h1 class="display-5 fw-bold text-primary">Our Faculty</h1>
+      <p class="text-muted fs-5">Meet the researchers and educators shaping the future</p>
+      <hr class="w-25 mx-auto border-primary border-2 opacity-75">
+    </div>
+
+    {% if professors %}
+    <div class="row row-cols-1 row-cols-md-2 row-cols-xl-3 g-4">
+      {% for prof in professors %}
+      <div class="col">
+        <div class="card h-100 shadow-sm border-0 professor-card">
+          <div class="card-header bg-primary text-white py-3">
+            <h5 class="card-title mb-0 fw-semibold">{{ prof.name }}</h5>
+            <span class="badge bg-white text-primary mt-1">{{ prof.designation }}</span>
+          </div>
+          <div class="card-body">
+
+            <div class="mb-3">
+              <p class="small text-muted text-uppercase fw-semibold mb-1">
+                <i class="bi bi-mortarboard-fill me-1"></i> Degree
+              </p>
+              <p class="mb-0">{{ prof.degree }}</p>
+            </div>
+
+            <div class="mb-3">
+              <p class="small text-muted text-uppercase fw-semibold mb-1">
+                <i class="bi bi-lightbulb-fill me-1"></i> Research Interests
+              </p>
+              <p class="mb-0 text-secondary" style="font-size: 0.92rem; line-height: 1.6;">
+                {{ prof.research_interests }}
+              </p>
+            </div>
+
+          </div>
+          <div class="card-footer bg-light border-0">
+            <div class="d-flex flex-column gap-1">
+              <a href="mailto:{{ prof.email }}" class="text-decoration-none text-dark small">
+                <i class="bi bi-envelope-fill text-primary me-2"></i>{{ prof.email }}
+              </a>
+              <span class="text-dark small">
+                <i class="bi bi-telephone-fill text-primary me-2"></i>{{ prof.phone }}
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+
+    {% else %}
+    <div class="alert alert-warning text-center mt-4" role="alert">
+      <i class="bi bi-exclamation-triangle-fill me-2"></i>
+      No professors found. Run <code>python manage.py populate_professors</code> to load data.
+    </div>
+    {% endif %}
+
+  </div>
+</section>
+
+<style>
+  .professor-card {
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    border-radius: 12px;
+    overflow: hidden;
+  }
+  .professor-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 12px 28px rgba(0,0,0,0.12) !important;
+  }
+  .card-header {
+    border-radius: 0 !important;
+  }
+</style>
+{% endblock %}

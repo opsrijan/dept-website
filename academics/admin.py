@@ -1,10 +1,9 @@
 from django.contrib import admin
+from .models import Professor
 
-from .models import AcademicProgram
 
-
-@admin.register(AcademicProgram)
-class AcademicProgramAdmin(admin.ModelAdmin):
-    list_display = ("title", "degree_type", "duration_years", "is_active")
-    list_filter = ("degree_type", "is_active")
-    search_fields = ("title",)
+@admin.register(Professor)
+class ProfessorAdmin(admin.ModelAdmin):
+    list_display = ('name', 'designation', 'email', 'phone')
+    search_fields = ('name', 'designation', 'research_interests')
+    

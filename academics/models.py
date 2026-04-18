@@ -10,3 +10,17 @@ class AcademicProgram(models.Model):
 
     def __str__(self):
         return self.title
+
+class Professor(models.Model):
+    name = models.CharField(max_length=200)
+    designation = models.CharField(max_length=200)
+    research_interests = models.TextField()
+    degree = models.CharField(max_length=300)
+    email = models.CharField(max_length=200)
+    phone = models.CharField(max_length=50)
+
+    class Meta:
+        ordering = ['name']
+
+    def __str__(self):
+        return f"{self.name} – {self.designation}"
