@@ -1,27 +1,194 @@
 {% extends "base.html" %}
-
-{% block title %}Gallery | Department{% endblock %}
+{% block title %}Gallery{% endblock %}
 
 {% block content %}
-<div class="card shadow-sm">
-    <div class="card-header bg-white"><h2 class="h4 mb-0">Gallery</h2></div>
-    <div class="card-body">
-        <div class="row g-3">
-            {% for item in gallery_items %}
-                <div class="col-md-4">
-                    <div class="card h-100">
-                        <img src="{{ item.image_url }}" class="card-img-top" alt="{{ item.title }}">
-                        <div class="card-body">
-                            <h3 class="h6">{{ item.title }}</h3>
-                            <p class="mb-1 text-muted">{{ item.event_name }}</p>
-                            <p class="small mb-0">{{ item.caption }}</p>
-                        </div>
-                    </div>
-                </div>
-            {% empty %}
-                <p class="text-muted mb-0">No gallery items uploaded yet.</p>
-            {% endfor %}
+<div class="gallery-page">
+
+  <!-- Header -->
+  <div class="text-center mb-4">
+    <h1 class="display-5 fw-bold text-primary">
+      <i class="bi bi-images me-2"></i>Gallery
+    </h1>
+    <p class="text-muted">Moments captured across the years</p>
+    <hr class="w-25 mx-auto border-primary border-2 opacity-75">
+  </div>
+
+  <!-- Year Filter Tabs -->
+  <div class="d-flex flex-wrap justify-content-center gap-2 mb-4">
+    <button class="btn btn-primary btn-sm filter-btn active" data-year="all">
+      All Years
+    </button>
+    {% for year in years %}
+    <button class="btn btn-outline-primary btn-sm filter-btn" data-year="{{ year }}">
+      {{ year }}
+    </button>
+    {% endfor %}
+  </div>
+
+  <!-- Image Grid -->
+  {% if images %}
+  <div class="row g-3" id="gallery-grid">
+    {% for img in images %}
+    <div class="col-6 col-md-4 col-lg-3 gallery-item" data-year="{{ img.year }}">
+      <div class="gallery-card" data-bs-toggle="modal" data-bs-target="#lightbox"
+           data-img="{{ img.image_url }}" data-title="{{ img.title }}"
+           data-year="{{ img.year }}" data-category="{{ img.category }}">
+        <img src="{{ img.image_url }}" alt="{{ img.title }}" loading="lazy" referrerpolicy="no-referrer">
+        <div class="gallery-overlay">
+          <p class="overlay-title">{{ img.title }}</p>
+          <span class="overlay-badge">{{ img.year }}</span>
+          <span class="overlay-badge bg-white text-primary ms-1">{{ img.category }}</span>
         </div>
+      </div>
     </div>
+    {% endfor %}
+  </div>
+
+  <!-- Empty state after filter -->
+  <div id="no-results" class="text-center py-5 d-none">
+    <i class="bi bi-image text-muted" style="font-size:3rem;"></i>
+    <p class="text-muted mt-2">No images found for this year.</p>
+  </div>
+
+  {% else %}
+  <div class="alert alert-warning text-center">
+    <i class="bi bi-exclamation-triangle me-2"></i>
+    No images yet. Run <code>python manage.py populate_gallery</code>
+  </div>
+  {% endif %}
+
 </div>
+
+<!-- Lightbox Modal -->
+<div class="modal fade" id="lightbox" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-dialog-centered">
+    <div class="modal-content bg-dark border-0">
+      <div class="modal-header border-0 pb-0">
+        <div>
+          <h6 class="modal-title text-white mb-0" id="lb-title"></h6>
+          <small class="text-muted" id="lb-meta"></small>
+        </div>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body p-2">
+        <img id="lb-img" src="" alt="" class="img-fluid rounded w-100"
+             style="max-height:75vh; object-fit:contain;">
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+  .gallery-card {
+    position: relative;
+    overflow: hidden;
+    border-radius: 10px;
+    cursor: pointer;
+    background: #ddd;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+  .gallery-card::before {
+    content: "";
+    display: block;
+    padding-top: 100%;
+  }
+  .gallery-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 10px 24px rgba(0,0,0,0.15);
+  }
+  .gallery-card img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform 0.3s ease;
+  }
+  .gallery-card:hover img {
+    transform: scale(1.06);
+  }
+  .gallery-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to top, rgba(0,0,0,0.75) 0%, transparent 50%);
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding: 0.75rem;
+    opacity: 0;
+    transition: opacity 0.25s ease;
+  }
+  .gallery-card:hover .gallery-overlay {
+    opacity: 1;
+  }
+  .overlay-title {
+    color: #fff;
+    font-size: 0.82rem;
+    font-weight: 600;
+    margin-bottom: 0.3rem;
+    line-height: 1.3;
+  }
+  .overlay-badge {
+    display: inline-block;
+    background: #0d6efd;
+    color: #fff;
+    font-size: 0.7rem;
+    padding: 1px 8px;
+    border-radius: 20px;
+  }
+  .gallery-item {
+    transition: opacity 0.3s ease, transform 0.3s ease;
+  }
+  .gallery-item.hidden {
+    display: none;
+  }
+  .filter-btn {
+    border-radius: 20px;
+    padding: 4px 16px;
+    font-size: 0.85rem;
+  }
+</style>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+  // Year filter
+  document.querySelectorAll('.filter-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.filter-btn').forEach(b => {
+        b.classList.remove('active', 'btn-primary');
+        b.classList.add('btn-outline-primary');
+      });
+      btn.classList.add('active', 'btn-primary');
+      btn.classList.remove('btn-outline-primary');
+
+      const year = btn.dataset.year;
+      let visible = 0;
+
+      document.querySelectorAll('.gallery-item').forEach(item => {
+        const match = year === 'all' || item.dataset.year === year;
+        item.classList.toggle('hidden', !match);
+        if (match) visible++;
+      });
+
+      document.getElementById('no-results').classList.toggle('d-none', visible > 0);
+    });
+  });
+
+  // Lightbox
+  document.getElementById('lightbox').addEventListener('show.bs.modal', e => {
+    const card = e.relatedTarget;
+    document.getElementById('lb-img').src   = card.dataset.img;
+    document.getElementById('lb-title').textContent = card.dataset.title;
+    document.getElementById('lb-meta').textContent  =
+      card.dataset.year + ' · ' + card.dataset.category;
+  });
+  document.getElementById('lightbox').addEventListener('hidden.bs.modal', () => {
+    document.getElementById('lb-img').src = '';
+  });
+</script>
 {% endblock %}

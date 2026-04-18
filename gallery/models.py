@@ -1,12 +1,13 @@
 from django.db import models
 
+class GalleryImage(models.Model):
+    title      = models.CharField(max_length=200)
+    image_url  = models.URLField(max_length=500)
+    year       = models.IntegerField()
+    category   = models.CharField(max_length=100, default='General')
 
-class GalleryItem(models.Model):
-    title = models.CharField(max_length=150)
-    image_url = models.URLField()
-    event_name = models.CharField(max_length=150, blank=True)
-    event_date = models.DateField(null=True, blank=True)
-    caption = models.TextField(blank=True)
+    class Meta:
+        ordering = ['-year', 'id']
 
     def __str__(self):
-        return self.title
+        return f"{self.title} ({self.year})"
