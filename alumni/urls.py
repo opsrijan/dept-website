@@ -1,9 +1,8 @@
 from django.urls import path
+from .views import AlumniListView
 
-from .views import AlumniProfileListView
-
-app_name = "alumni"
+app_name = 'alumni'
 
 urlpatterns = [
-    path("", AlumniProfileListView.as_view(), name="index"),
+    path('', AlumniListView.as_view(), name='index'),
 ]

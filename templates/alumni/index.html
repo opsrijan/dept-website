@@ -1,19 +1,264 @@
 {% extends "base.html" %}
-
-{% block title %}Alumni | Department{% endblock %}
+{% block title %}Alumni{% endblock %}
 
 {% block content %}
-<div class="card shadow-sm">
-    <div class="card-header bg-white"><h2 class="h4 mb-0">Alumni</h2></div>
-    <div class="card-body">
-        {% for alumni in alumni_profiles %}
-            <h3 class="h6">{{ alumni.name }} ({{ alumni.graduation_year }})</h3>
-            <p class="mb-1">{{ alumni.current_role }} at {{ alumni.company }}</p>
-            <p class="text-muted">{{ alumni.achievements|default:"No achievements added yet." }}</p>
-            <hr>
-        {% empty %}
-            <p class="text-muted mb-0">No alumni profiles available.</p>
-        {% endfor %}
+<div class="alumni-page">
+
+  <!-- Header -->
+  <div class="text-center mb-4">
+    <h1 class="display-5 fw-bold text-primary">
+      <i class="bi bi-people-fill me-2"></i>Our Alumni
+    </h1>
+    <p class="text-muted fs-5">Proud graduates making an impact across the world</p>
+    <hr class="w-25 mx-auto border-primary border-2 opacity-75">
+  </div>
+
+  <!-- Stats Bar -->
+  <div class="row g-3 mb-5 text-center">
+    <div class="col-6 col-md-3">
+      <div class="stat-box">
+        <div class="stat-number">{{ alumni.count }}</div>
+        <div class="stat-label">Alumni</div>
+      </div>
     </div>
+    <div class="col-6 col-md-3">
+      <div class="stat-box">
+        <div class="stat-number">{{ batches|length }}</div>
+        <div class="stat-label">Batches</div>
+      </div>
+    </div>
+    <div class="col-6 col-md-3">
+      <div class="stat-box">
+        <div class="stat-number">50+</div>
+        <div class="stat-label">Companies</div>
+      </div>
+    </div>
+    <div class="col-6 col-md-3">
+      <div class="stat-box">
+        <div class="stat-number">15+</div>
+        <div class="stat-label">Countries</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Batch Filter -->
+  <div class="d-flex flex-wrap justify-content-center gap-2 mb-4">
+    <button class="btn btn-primary btn-sm filter-btn active" data-batch="all">
+      All Batches
+    </button>
+    {% for batch in batches %}
+    <button class="btn btn-outline-primary btn-sm filter-btn" data-batch="{{ batch }}">
+      {{ batch }}
+    </button>
+    {% endfor %}
+  </div>
+
+  <!-- Search -->
+  <div class="row justify-content-center mb-4">
+    <div class="col-md-5">
+      <div class="input-group">
+        <span class="input-group-text bg-white border-end-0">
+          <i class="bi bi-search text-muted"></i>
+        </span>
+        <input type="text" id="alumni-search" class="form-control border-start-0"
+               placeholder="Search by name, company or role...">
+      </div>
+    </div>
+  </div>
+
+  <!-- Alumni Cards -->
+  {% if alumni %}
+  <div class="row g-4" id="alumni-grid">
+    {% for person in alumni %}
+    <div class="col-md-6 col-lg-4 alumni-item" data-batch="{{ person.batch }}"
+         data-search="{{ person.name|lower }} {{ person.company|lower }} {{ person.role|lower }}">
+      <div class="card h-100 border-0 shadow-sm alumni-card">
+
+        <!-- Card Top -->
+        <div class="card-header-custom">
+          <div class="avatar-circle">
+            {{ person.name|slice:":1" }}
+          </div>
+          <div class="ms-3">
+            <h6 class="mb-0 fw-bold text-white">{{ person.name }}</h6>
+            <span class="badge bg-white text-primary mt-1">Batch {{ person.batch }}</span>
+          </div>
+        </div>
+
+        <!-- Card Body -->
+        <div class="card-body pt-3 pb-2">
+          {% if person.company or person.role %}
+          <div class="d-flex align-items-center mb-2">
+            <i class="bi bi-building text-primary me-2"></i>
+            <span class="text-dark small fw-semibold">
+              {{ person.role }}{% if person.role and person.company %} &middot; {% endif %}{{ person.company }}
+            </span>
+          </div>
+          {% endif %}
+
+          {% if person.email %}
+          <div class="d-flex align-items-center mb-2">
+            <i class="bi bi-envelope text-primary me-2"></i>
+            <a href="mailto:{{ person.email }}" class="text-muted small text-decoration-none contact-link">
+              {{ person.email }}
+            </a>
+          </div>
+          {% endif %}
+
+          {% if person.phone %}
+          <div class="d-flex align-items-center mb-2">
+            <i class="bi bi-telephone text-primary me-2"></i>
+            <span class="text-muted small">{{ person.phone }}</span>
+          </div>
+          {% endif %}
+        </div>
+
+        <!-- Card Footer — Social Links -->
+        <div class="card-footer bg-transparent border-0 pt-0 pb-3">
+          <div class="d-flex gap-2">
+            {% if person.github %}
+            <a href="{{ person.github }}" target="_blank" rel="noopener"
+               class="btn btn-sm btn-outline-dark social-btn">
+              <i class="bi bi-github me-1"></i>GitHub
+            </a>
+            {% endif %}
+            {% if person.linkedin %}
+            <a href="{{ person.linkedin }}" target="_blank" rel="noopener"
+               class="btn btn-sm btn-primary social-btn">
+              <i class="bi bi-linkedin me-1"></i>LinkedIn
+            </a>
+            {% endif %}
+          </div>
+        </div>
+
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+
+  <!-- No results -->
+  <div id="no-results" class="text-center py-5 d-none">
+    <i class="bi bi-person-x text-muted" style="font-size:3rem;"></i>
+    <p class="text-muted mt-2">No alumni found matching your search.</p>
+  </div>
+
+  {% else %}
+  <div class="alert alert-warning text-center">
+    <i class="bi bi-exclamation-triangle me-2"></i>
+    No alumni yet. Run <code>python manage.py populate_alumni</code>
+  </div>
+  {% endif %}
+
 </div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+  .stat-box {
+    background: #fff;
+    border-radius: 12px;
+    padding: 1.2rem 1rem;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.06);
+  }
+  .stat-number {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #0d6efd;
+    line-height: 1;
+  }
+  .stat-label {
+    font-size: 0.8rem;
+    color: #6c757d;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-top: 4px;
+  }
+  .alumni-card {
+    border-radius: 14px;
+    overflow: hidden;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+  .alumni-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 28px rgba(0,0,0,0.12) !important;
+  }
+  .card-header-custom {
+    background: linear-gradient(135deg, #0d6efd, #0a58ca);
+    padding: 1.1rem 1.2rem;
+    display: flex;
+    align-items: center;
+  }
+  .avatar-circle {
+    width: 46px;
+    height: 46px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.25);
+    color: #fff;
+    font-size: 1.3rem;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    border: 2px solid rgba(255,255,255,0.4);
+  }
+  .contact-link:hover {
+    color: #0d6efd !important;
+  }
+  .social-btn {
+    border-radius: 20px;
+    font-size: 0.78rem;
+    padding: 3px 12px;
+  }
+  .filter-btn {
+    border-radius: 20px;
+    padding: 4px 16px;
+    font-size: 0.85rem;
+  }
+  .alumni-item.hidden {
+    display: none;
+  }
+  .input-group-text {
+    border-radius: 8px 0 0 8px;
+  }
+  .form-control {
+    border-radius: 0 8px 8px 0;
+  }
+</style>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+  // Batch filter
+  document.querySelectorAll('.filter-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.filter-btn').forEach(b => {
+        b.classList.remove('active', 'btn-primary');
+        b.classList.add('btn-outline-primary');
+      });
+      btn.classList.add('active', 'btn-primary');
+      btn.classList.remove('btn-outline-primary');
+      applyFilters();
+    });
+  });
+
+  // Search
+  document.getElementById('alumni-search').addEventListener('input', applyFilters);
+
+  function applyFilters() {
+    const batch  = document.querySelector('.filter-btn.active').dataset.batch;
+    const search = document.getElementById('alumni-search').value.toLowerCase().trim();
+    let visible  = 0;
+
+    document.querySelectorAll('.alumni-item').forEach(item => {
+      const batchMatch  = batch === 'all' || item.dataset.batch === batch;
+      const searchMatch = !search || item.dataset.search.includes(search);
+      const show = batchMatch && searchMatch;
+      item.classList.toggle('hidden', !show);
+      if (show) visible++;
+    });
+
+    document.getElementById('no-results').classList.toggle('d-none', visible > 0);
+  }
+</script>
 {% endblock %}

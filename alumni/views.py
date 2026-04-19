@@ -1,9 +1,15 @@
-from django.views.generic import ListView
+from django.views.generic import TemplateView
+from .models import Alumni
 
-from .models import AlumniProfile
 
+class AlumniListView(TemplateView):
+    template_name = 'alumni/index.html'
 
-class AlumniProfileListView(ListView):
-    model = AlumniProfile
-    template_name = "alumni/index.html"
-    context_object_name = "alumni_profiles"
+    def get_context_data(self, **kwargs):
+        ctx = super().get_context_data(**kwargs)
+        ctx['alumni']  = Alumni.objects.all()
+        ctx['batches'] = (Alumni.objects
+                          .values_list('batch', flat=True)
+                          .distinct()
+                          .order_by('-batch'))
+        return ctx

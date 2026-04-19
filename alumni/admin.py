@@ -1,10 +1,9 @@
 from django.contrib import admin
+from .models import Alumni
 
-from .models import AlumniProfile
 
-
-@admin.register(AlumniProfile)
-class AlumniProfileAdmin(admin.ModelAdmin):
-    list_display = ("name", "graduation_year", "current_role", "company")
-    list_filter = ("graduation_year",)
-    search_fields = ("name", "company")
+@admin.register(Alumni)
+class AlumniAdmin(admin.ModelAdmin):
+    list_display  = ('name', 'batch', 'company', 'role', 'email')
+    list_filter   = ('batch',)
+    search_fields = ('name', 'company', 'role')
