@@ -6,6 +6,9 @@
 <div class="card shadow-sm">
     <div class="card-header bg-white"><h2 class="h4 mb-0">Internship Opportunities</h2></div>
     <div class="card-body">
+        <p class="mb-4">
+            <a href="https://iitgoffice-my.sharepoint.com/:f:/g/personal/tensor_dsai_iitg_ac_in/IgBWpY-6rBdxTKFVgUrSWkuvASKpfN9P5zUIiB7hc17foMg?e=fCclxd" target="_blank" rel="noopener noreferrer">Internship resources</a>
+        </p>
         {% for internship in internships %}
             <h3 class="h6">{{ internship.company_name }} - {{ internship.role }}</h3>
             <p class="mb-1">Stipend: {{ internship.stipend|default:"Not specified" }}</p>
@@ -13,7 +16,7 @@
             <p class="text-muted">{{ internship.description }}</p>
             <hr>
         {% empty %}
-            <p class="text-muted mb-0">No internship opportunities available.</p>
+            <!-- <p class="text-muted mb-0">No internship opportunities available.</p> -->
         {% endfor %}
     </div>
 </div>

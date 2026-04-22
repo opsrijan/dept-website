@@ -6,13 +6,16 @@
 <div class="card shadow-sm">
     <div class="card-header bg-white"><h2 class="h4 mb-0">Placement Records</h2></div>
     <div class="card-body">
+        <p class="mb-4">
+            <a href="https://iitgoffice-my.sharepoint.com/:f:/g/personal/tensor_dsai_iitg_ac_in/IgCUPqHulvdSSoBMJKuLtYLSAa9xg-dqAm8SJxnauZqQHD0?e=fa8mAD" target="_blank" rel="noopener noreferrer">Placement resources</a>
+        </p>
         {% for placement in placements %}
             <h3 class="h6">{{ placement.student_name }} - {{ placement.company_name }}</h3>
             <p class="mb-1">Package: {{ placement.package_lpa }} LPA</p>
             <p class="text-muted">Year: {{ placement.year }}</p>
             <hr>
         {% empty %}
-            <p class="text-muted mb-0">No placement records found.</p>
+            <!-- <p class="text-muted mb-0">No placement records found.</p> -->
         {% endfor %}
     </div>
 </div>
