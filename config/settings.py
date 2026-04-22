@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'core',
     'academics',
+    'our_dept',
     'internships',
     'placements',
     'opportunities',

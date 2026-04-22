@@ -1,0 +1,273 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}PhD Students | {{ block.super }}{% endblock %}
+
+{% block extra_css %}
+<style>
+  .students-hero {
+    background: linear-gradient(135deg, #0f172a 0%, #1e3a5f 60%, #1d4ed8 100%);
+    padding: 72px 0 56px;
+    position: relative;
+    overflow: hidden;
+  }
+  .students-hero::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.03'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+    pointer-events: none;
+  }
+  .students-hero h1 {
+    font-size: clamp(2rem, 5vw, 3rem);
+    font-weight: 800;
+    letter-spacing: -0.5px;
+    color: #fff;
+  }
+  .students-hero p {
+    color: rgba(255,255,255,0.72);
+    font-size: 1.1rem;
+    max-width: 520px;
+    margin: 0 auto;
+  }
+  .badge-count {
+    display: inline-block;
+    background: rgba(255,255,255,0.12);
+    border: 1px solid rgba(255,255,255,0.2);
+    color: #fff;
+    border-radius: 999px;
+    padding: 4px 16px;
+    font-size: 0.85rem;
+    letter-spacing: 0.4px;
+    margin-bottom: 16px;
+  }
+
+  /* Batch tabs */
+  .batch-tabs {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-bottom: 36px;
+  }
+  .batch-tab {
+    padding: 8px 22px;
+    border-radius: 999px;
+    border: 2px solid #e2e8f0;
+    background: #fff;
+    color: #475569;
+    font-weight: 600;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.18s ease;
+    text-decoration: none;
+  }
+  .batch-tab:hover {
+    background: #1d4ed8;
+    border-color: #1d4ed8;
+    color: #fff;
+  }
+
+  /* Section */
+  .batch-section { padding: 48px 0 12px; }
+  .batch-heading {
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: #0f172a;
+    margin-bottom: 4px;
+  }
+  .section-accent {
+    width: 44px; height: 4px;
+    border-radius: 2px;
+    background: linear-gradient(90deg, #1d4ed8, #60a5fa);
+    margin: 8px 0 28px;
+  }
+
+  /* Card */
+  .student-card {
+    background: #fff;
+    border: 1px solid #e8edf2;
+    border-radius: 16px;
+    padding: 28px 24px 24px;
+    text-align: center;
+    transition: transform 0.22s ease, box-shadow 0.22s ease, border-color 0.22s ease;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  .student-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 20px 40px rgba(29, 78, 216, 0.12);
+    border-color: #bfdbfe;
+  }
+
+  /* Avatar */
+  .student-avatar-wrap {
+    width: 88px; height: 88px;
+    border-radius: 50%;
+    overflow: hidden;
+    margin: 0 auto 14px;
+    border: 3px solid #e0eaff;
+    background: #f1f5f9;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+  .student-avatar-wrap img { width: 100%; height: 100%; object-fit: cover; }
+  .avatar-fallback {
+    width: 100%; height: 100%;
+    display: flex; align-items: center; justify-content: center;
+    background: linear-gradient(135deg, #dbeafe, #bfdbfe);
+    color: #1d4ed8;
+    font-size: 1.8rem;
+    font-weight: 700;
+  }
+
+  /* Text */
+  .student-name {
+    font-size: 1rem;
+    font-weight: 700;
+    color: #0f172a;
+    margin-bottom: 6px;
+  }
+  .student-interests {
+    display: inline-block;
+    background: #f0fdf4;
+    color: #16a34a;
+    border: 1px solid #bbf7d0;
+    font-size: 0.75rem;
+    font-weight: 600;
+    border-radius: 999px;
+    padding: 2px 12px;
+    margin-bottom: 8px;
+  }
+  .student-divider {
+    width: 32px; height: 2px;
+    background: #dbeafe; border-radius: 2px;
+    margin: 10px auto;
+  }
+
+  /* Social icons */
+  .social-row {
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+    margin-top: auto;
+    padding-top: 14px;
+  }
+  .social-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 34px; height: 34px;
+    border-radius: 8px;
+    text-decoration: none;
+    font-size: 0.78rem;
+    font-weight: 600;
+    transition: transform 0.15s ease, opacity 0.15s ease;
+  }
+  .social-btn:hover { transform: scale(1.12); opacity: 0.88; }
+  .social-btn.linkedin { background: #0a66c2; color: #fff; }
+  .social-btn.github   { background: #24292e; color: #fff; }
+  .social-btn.email    { background: #e2e8f0; color: #475569; }
+</style>
+{% endblock %}
+
+
+{% block content %}
+
+<section class="students-hero text-center">
+  <div class="container position-relative" style="z-index:1;">
+    <span class="badge-count">🔬 PhD Students</span>
+    <h1>PhD Scholars</h1>
+    <p class="mt-2">Meet the researchers and scholars pursuing doctoral studies in our department.</p>
+  </div>
+</section>
+
+<div class="container" style="padding-top: 48px;">
+
+  {# Breadcrumb #}
+  <nav aria-label="breadcrumb" class="mb-4">
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item"><a href="/">Home</a></li>
+      <li class="breadcrumb-item">Our Department</li>
+      <li class="breadcrumb-item active" aria-current="page">PhD Students</li>
+    </ol>
+  </nav>
+
+  {# Batch anchor-tab nav #}
+  <div class="batch-tabs">
+    {% for batch_label, members in grouped_students.items %}
+      <a class="batch-tab" href="#batch-{{ forloop.counter }}">
+        {{ batch_label }}
+      </a>
+    {% endfor %}
+  </div>
+
+  {# Batch sections #}
+  {% for batch_label, members in grouped_students.items %}
+  <section class="batch-section" id="batch-{{ forloop.counter }}">
+    <div class="batch-heading">{{ batch_label }}</div>
+    <p style="color:#64748b;font-size:0.92rem;margin-bottom:0;">
+      {{ members|length }} scholar{{ members|length|pluralize }}
+    </p>
+    <div class="section-accent"></div>
+
+    <div class="row g-4">
+      {% for student in members %}
+      <div class="col-sm-6 col-lg-4 col-xl-3">
+        <div class="student-card">
+
+          {# Avatar #}
+          <div class="student-avatar-wrap">
+            {% if student.profile_image %}
+              <img src="{{ student.profile_image.url }}" alt="{{ student.name }}" loading="lazy" />
+            {% else %}
+              <div class="avatar-fallback">{{ student.name|first|upper }}</div>
+            {% endif %}
+          </div>
+
+          {# Name #}
+          <div class="student-name">{{ student.name }}</div>
+
+          {# Research Interests #}
+          {% if student.interests %}
+            <span class="student-interests">{{ student.interests }}</span>
+          {% endif %}
+
+          {# Social icons #}
+          <div class="social-row">
+            {% if student.linkedin %}
+              <a href="{{ student.linkedin }}" target="_blank" rel="noopener noreferrer"
+                 class="social-btn linkedin" title="LinkedIn">in</a>
+            {% endif %}
+            {% if student.github %}
+              <a href="{{ student.github }}" target="_blank" rel="noopener noreferrer"
+                 class="social-btn github" title="GitHub">
+                <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" fill="currentColor" viewBox="0 0 16 16">
+                  <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8"/>
+                </svg>
+              </a>
+            {% endif %}
+            {% if student.email %}
+              <a href="mailto:{{ student.email }}"
+                 class="social-btn email" title="Email">
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" viewBox="0 0 16 16">
+                  <path d="M0 4a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2zm2-1a1 1 0 0 0-1 1v.217l7 4.2 7-4.2V4a1 1 0 0 0-1-1zm13 2.383-4.708 2.825L15 11.105zm-.034 6.876-5.64-3.471L8 9.583l-1.326-.795-5.64 3.47A1 1 0 0 0 2 13h12a1 1 0 0 0 .966-.741M1 11.105l4.708-2.897L1 5.383z"/>
+                </svg>
+              </a>
+            {% endif %}
+          </div>
+
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </section>
+  {% endfor %}
+
+</div>
+
+<div style="padding-bottom: 64px;"></div>
+{% endblock %}
